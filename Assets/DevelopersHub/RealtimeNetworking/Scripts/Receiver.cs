@@ -31,10 +31,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
 
         public static void ReceiveInternal(Packet packet)
         {
-            if (packet != null)
-            {
-                RealtimeNetworking.instance._ReceiveInternal(packet);
-            }
+
         }
 
     }
