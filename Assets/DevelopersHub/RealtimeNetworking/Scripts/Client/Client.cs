@@ -6,6 +6,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
     using System.Net.Sockets;
     using System;
     using System.Linq;
+    using DevelopersHub.RealtimeNetworking.Common;
 
     public class Client : MonoBehaviour
     {
@@ -67,15 +68,11 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 Debug.LogError(ex.Message);
             }
             DontDestroyOnLoad(gameObject);
-            Threading[] threadings = FindObjectsByType<Threading>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            if (threadings != null && threadings.Length > 0)
-            {
-                for (int i = 0; i < threadings.Length; i++)
-                {
-                    Destroy(threadings[i]);
-                }
-            }
-            gameObject.AddComponent<Threading>();
+        }
+
+        private void Update()
+        {
+            Threading.UpdateMain();
         }
 
         private void OnApplicationQuit()
@@ -340,10 +337,6 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 if (udp != null && udp.socket != null)
                 {
                     udp.socket.Close();
-                }
-                if(ThreadDispatcher.instance != null)
-                {
-                    ThreadDispatcher.instance.Enqueue(() => RealtimeNetworking.instance._Disconnected());
                 }
             }
         }

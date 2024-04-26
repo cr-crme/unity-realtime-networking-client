@@ -1,4 +1,4 @@
-namespace DevelopersHub.RealtimeNetworking.Client
+namespace DevelopersHub.RealtimeNetworking.Common
 {
     using System.IO;
     using UnityEngine;
@@ -17,7 +17,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
         [UnityEditor.MenuItem("Developers Hub/Realtime Networking/Settings")]
         public static void CreateSettings()
         {
-            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:" + typeof(DevelopersHub.RealtimeNetworking.Client.Settings).Name);
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:" + typeof(Settings).Name);
             if (guids.Length > 0)
             {
                 string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
@@ -32,7 +32,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 {
                     Directory.CreateDirectory(path);
                 }
-                DevelopersHub.RealtimeNetworking.Client.Settings asset = ScriptableObject.CreateInstance<DevelopersHub.RealtimeNetworking.Client.Settings>();
+                Settings asset = ScriptableObject.CreateInstance<Settings>();
                 UnityEditor.AssetDatabase.CreateAsset(asset, "Assets/DevelopersHub/RealtimeNetworking/Resources/Settings.asset");
                 UnityEditor.AssetDatabase.SaveAssets();
                 UnityEditor.EditorUtility.FocusProjectWindow();

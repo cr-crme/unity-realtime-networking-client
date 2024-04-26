@@ -2,6 +2,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
 {
     using System.Net;
     using UnityEngine;
+    using DevelopersHub.RealtimeNetworking.Common;
 
     public class Receiver : MonoBehaviour
     {

@@ -1,4 +1,4 @@
-namespace DevelopersHub.RealtimeNetworking.Client
+namespace DevelopersHub.RealtimeNetworking.Common
 {
     using System;
     using System.Collections;
@@ -14,24 +14,48 @@ namespace DevelopersHub.RealtimeNetworking.Client
 
     public static class Tools
     {
-
+        public static void LogError(string message, string trace, string folder = "")
+        {
+            Console.WriteLine("Error:" + "\n" + message + "\n" + trace);
+            Task task = Task.Run(() =>
+            {
+                try
+                {
+                    string folderPath = @"./Logs/";
+                    if (!string.IsNullOrEmpty(folder))
+                    {
+                        folderPath = folderPath + folder + "\\";
+                    }
+                    string path = folderPath + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss-ffff") + ".txt";
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    File.WriteAllText(path, message + "\n" + trace);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error:" + "\n" + ex.Message + "\n" + ex.StackTrace);
+                }
+            });
+        }
+        
         public static string GenerateToken()
         {
             return Path.GetRandomFileName().Remove(8, 1);
         }
 
-        public static T CloneClass<T>(this T target)
+        public static string GetIP(AddressFamily type)
         {
-            return Desrialize<T>(Serialize<T>(target));
-        }
-
-        public static void CopyTo(Stream source, Stream target)
-        {
-            byte[] bytes = new byte[4096]; int count;
-            while ((count = source.Read(bytes, 0, bytes.Length)) != 0)
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
             {
-                target.Write(bytes, 0, count);
+                if (ip.AddressFamily == type)
+                {
+                    return ip.ToString();
+                }
             }
+            return "0.0.0.0";
         }
 
         public static int FindFreeTcpPort()
@@ -43,21 +67,19 @@ namespace DevelopersHub.RealtimeNetworking.Client
             return port;
         }
 
-        #region Encryption
-        public static string EncrypteToMD5(string data)
+        public static T CloneClass<T>(this T target)
         {
-            UTF8Encoding ue = new UTF8Encoding();
-            byte[] bytes = ue.GetBytes(data);
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            byte[] hashBytes = md5.ComputeHash(bytes);
-            string hashString = "";
-            for (int i = 0; i < hashBytes.Length; i++)
-            {
-                hashString = hashString + Convert.ToString(hashBytes[i], 16).PadLeft(2, '0');
-            }
-            return hashString.PadLeft(32, '0');
+            return Deserialize<T>(Serialize<T>(target));
         }
-        #endregion
+
+        public static void CopyTo(Stream source, Stream target)
+        {
+            byte[] bytes = new byte[4096]; int count;
+            while ((count = source.Read(bytes, 0, bytes.Length)) != 0)
+            {
+                target.Write(bytes, 0, count);
+            }
+        }
 
         #region Serialization
         public static string Serialize<T>(this T target)
@@ -68,7 +90,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             return writer.ToString();
         }
 
-        public static T Desrialize<T>(this string target)
+        public static T Deserialize<T>(this string target)
         {
             XmlSerializer xml = new XmlSerializer(typeof(T));
             StringReader reader = new StringReader(target);
@@ -87,7 +109,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             return await task;
         }
 
-        public async static Task<T> DesrializeAsync<T>(this string target)
+        public async static Task<T> DeserializeAsync<T>(this string target)
         {
             Task<T> task = Task.Run(() =>
             {

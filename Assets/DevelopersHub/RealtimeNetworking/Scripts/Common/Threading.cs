@@ -1,20 +1,17 @@
-namespace DevelopersHub.RealtimeNetworking.Client
+namespace DevelopersHub.RealtimeNetworking.Common
 {
     using System;
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class Threading : MonoBehaviour
+    public class Threading
     {
         private static readonly List<Action> executeOnMainThread = new List<Action>();
         private static readonly List<Action> executeCopiedOnMainThread = new List<Action>();
         private static bool actionToExecuteOnMainThread = false;
 
-        private void Update()
-        {
-            UpdateMain();
-        }
-
+        /// <summary>Sets an action to be executed on the main thread.</summary>
+        /// <param name="_action">The action to be executed on the main thread.</param>
         public static void ExecuteOnMainThread(Action action)
         {
             if (action == null)
@@ -29,6 +26,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             }
         }
 
+        /// <summary>Executes all code meant to run on the main thread.</summary>
         public static void UpdateMain()
         {
             if (actionToExecuteOnMainThread)
