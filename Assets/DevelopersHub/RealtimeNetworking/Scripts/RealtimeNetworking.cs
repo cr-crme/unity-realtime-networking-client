@@ -52,21 +52,6 @@ namespace DevelopersHub.RealtimeNetworking.Client
             _initialized = true;
         }
 
-        private void OnEnable()
-        {
-
-        }
-
-        private void OnDisable()
-        {
-
-        }
-
-        private void Update()
-        {
-           
-        }
-
         public static void Connect()
         {
             Client.instance.ConnectToServer();
@@ -101,28 +86,6 @@ namespace DevelopersHub.RealtimeNetworking.Client
             {
                 OnPacketReceived.Invoke(packet);
             }
-        }
-
-        private static void SendTCPDataInternal(Packet _packet)
-        {
-            if (_packet == null)
-            {
-                return;
-            }
-            _packet.SetID((int)Packet.ID.INTERNAL);
-            _packet.WriteLength();
-            Client.instance.tcp.SendData(_packet);
-        }
-
-        private static void SendUDPDataInternal(Packet _packet)
-        {
-            if (_packet == null)
-            {
-                return;
-            }
-            _packet.SetID((int)Packet.ID.INTERNAL);
-            _packet.WriteLength();
-            Client.instance.udp.SendData(_packet);
         }
     }
 }
