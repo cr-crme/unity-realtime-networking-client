@@ -120,6 +120,7 @@ namespace DevelopersHub.RealtimeNetworking.Common
             startButton.gameObject.SetActive(true);
             stopButton.interactable = false;
             stopButton.gameObject.SetActive(false);
+            ValidateDataPath();
 
             _isRecording = false;
         }
