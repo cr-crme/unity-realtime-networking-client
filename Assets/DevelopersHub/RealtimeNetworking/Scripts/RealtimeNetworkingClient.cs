@@ -8,13 +8,14 @@ namespace DevelopersHub.RealtimeNetworking.Client{
         [SerializeField] private Transform ObjectToMove;
 
         private bool _IsConnected = false;
+        private float _TimeStamp = 0.0f; 
 
         // Start is called before the first frame update
         void Start()
         {
             RealtimeNetworking.OnDisconnectedFromServer += TryConnecting;
             RealtimeNetworking.OnPacketReceived += OnPacketReceived;
-            
+
             TryConnecting();
         }
 
@@ -22,17 +23,21 @@ namespace DevelopersHub.RealtimeNetworking.Client{
         {
             if (!_IsConnected) return;
 
-            try{
+            try
+            {
                 var packet = new Packet();
-                packet.Write((int)PacketType.Vector3);
+                packet.Write((int)PacketType.CsvWriterDataEntry);
+                packet.Write(_TimeStamp);
                 packet.Write(ObjectToMove.localPosition);
                 packet.Write(ObjectToMove.localRotation.eulerAngles);
-                Sender.UDP_Send(packet);
+                Sender.TCP_Send(packet);
             } catch (System.Exception e)
             {
                 Debug.Log("Error sending packet: " + e.Message);
                 TryConnecting();
             }
+
+            _TimeStamp += Time.fixedDeltaTime;
         }
 
         void OnConnectionResult(bool success)
@@ -49,6 +54,7 @@ namespace DevelopersHub.RealtimeNetworking.Client{
         void TryConnecting()
         {
             _IsConnected = false;
+            _TimeStamp = 0.0f;
             RealtimeNetworking.OnConnectingToServerResult += OnConnectionResult;
 
             StartCoroutine(TryConnectingCoroutine());

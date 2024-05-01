@@ -42,13 +42,14 @@ namespace DevelopersHub.RealtimeNetworking.Server{
             var packetType = packet.ReadInt();
             switch ((PacketType)packetType)
             {
-                case PacketType.Vector3:
+                case PacketType.CsvWriterDataEntry:
                     var timestamp = packet.ReadFloat();
                     var position = packet.ReadVector3();
                     var rotation = packet.ReadVector3();
+
                     ObjectToMove.position = new Vector3(position.X, position.Y, position.Z);
                     ObjectToMove.rotation = Quaternion.Euler(new Vector3(rotation.X, rotation.Y, rotation.Z));
-                    ObjectToSave.AddData(timestamp, position);
+                    ObjectToSave.AddData(new CsvWriter.DataEntry(timestamp, position, rotation));
                     break;
                 default:
                     Debug.Log("Unknown packet type.");

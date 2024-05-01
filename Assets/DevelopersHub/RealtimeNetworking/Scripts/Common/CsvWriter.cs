@@ -26,16 +26,24 @@ namespace DevelopersHub.RealtimeNetworking.Common
         {
             public float Timestamp { get; }
             public System.Numerics.Vector3 Position { get; }
+            public System.Numerics.Vector3 Rotation { get; }
 
-            public DataEntry(float timestamp, System.Numerics.Vector3 position)
+            public DataEntry(float timestamp, System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)
             {
                 Timestamp = timestamp;
                 Position = position;
+                Rotation = rotation;
+            }
+
+            public static string Header { 
+                get {
+                    return "Frame,Pos.X,Pos.Y,Pos.Z,Rot.X,Rot.Y,Rot.Z";
+                }
             }
 
             public override string ToString()
             {
-                return $"{Timestamp},{Position.X},{Position.Y},{Position.Z}";
+                return $"{Timestamp},{Position.X},{Position.Y},{Position.Z},{Rotation.X},{Rotation.Y},{Rotation.Z}";
             }
         }
 
@@ -70,7 +78,7 @@ namespace DevelopersHub.RealtimeNetworking.Common
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
 
             fileWriter = new StreamWriter(FilePath);
-            fileWriter.WriteLine("Frame,X,Y,Z");
+            fileWriter.WriteLine(DataEntry.Header);
 
             startButton.interactable = false;
             startButton.gameObject.SetActive(false);
@@ -97,7 +105,7 @@ namespace DevelopersHub.RealtimeNetworking.Common
             isRecording = false;
         }
 
-        void AddData(DataEntry data)
+        public void AddData(DataEntry data)
         {
             if (!isRecording)
             {
