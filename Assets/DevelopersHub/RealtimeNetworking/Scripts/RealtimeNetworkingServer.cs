@@ -7,8 +7,8 @@ namespace DevelopersHub.RealtimeNetworking.Server{
         
     public class RealtimeNetworkingServer : MonoBehaviour
     {
-        [SerializeField] private List<Transform> ObjectsToMove;
-        [SerializeField] private CsvWriter ObjectToSave;
+        [SerializeField] private List<Transform> _objectsToMove;
+        [SerializeField] private CsvWriter _objectToSave;
 
         // Start is called before the first frame update
         void Start()
@@ -43,10 +43,10 @@ namespace DevelopersHub.RealtimeNetworking.Server{
             switch ((PacketType)packetType)
             {
                 case PacketType.CsvWriterDataEntry:
-                    var _timestamp = packet.ReadFloat();
-                    var _dataToWrite= new CsvWriter.DataEntry(_timestamp);
+                    var timestamp = packet.ReadFloat();
+                    var dataToWrite= new CsvWriter.DataEntry(timestamp);
 
-                    foreach (var item in ObjectsToMove)
+                    foreach (var item in _objectsToMove)
                     {
                         var position = packet.ReadVector3();
                         var rotation = packet.ReadVector3();
@@ -54,10 +54,10 @@ namespace DevelopersHub.RealtimeNetworking.Server{
                         item.position = new Vector3(position.X, position.Y, position.Z);
                         item.rotation = Quaternion.Euler(new Vector3(rotation.X, rotation.Y, rotation.Z));
 
-                        _dataToWrite.Poses.Add(new CsvWriter.PoseVectors(position, rotation));
+                        dataToWrite.poses.Add(new CsvWriter.PoseVectors(position, rotation));
                     }
 
-                    ObjectToSave.AddData(_dataToWrite);
+                    _objectToSave.AddData(dataToWrite);
 
                     break;
                 default:

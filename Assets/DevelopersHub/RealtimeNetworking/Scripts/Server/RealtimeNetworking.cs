@@ -10,9 +10,9 @@ namespace DevelopersHub.RealtimeNetworking.Server
     public class RealtimeNetworking
     {
 
-        public const int Port = 5555;
-        public const int MaxUsers = 1000;
-        public const bool UdpActive = true;
+        public const int port = 5555;
+        public const int maxUsers = 1000;
+        public const bool udpActive = true;
 
 
         #region Events
@@ -29,7 +29,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         public static void Initialize()
         {
             Application.runInBackground = true;
-            Server.Start(MaxUsers, Port);
+            Server.Start(maxUsers, port);
         }
 
         public static void _ClientConnected(int id, string ip)

@@ -11,8 +11,8 @@ namespace DevelopersHub.RealtimeNetworking.Client
     public class Client : MonoBehaviour
     {
 
-        private static int dataBufferSize = 4096;
-        private static int connectTimeout = 5000;
+        private static int _dataBufferSize = 4096;
+        private static int _connectTimeout = 5000;
         private int _id = 0; public int id { get { return _id; } }
         private string _sendToken = "xxxxx"; public string sendToken { get { return _sendToken; } }
         private string _receiveToken = "xxxxx"; public string receiveToken { get { return _receiveToken; } }
@@ -20,7 +20,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
         public UDP udp;
         private bool _isConnected = false; public bool isConnected { get { return _isConnected; } }
         private delegate void PacketHandler(Packet _packet);
-        private static Dictionary<int, PacketHandler> packetHandlers;
+        private static Dictionary<int, PacketHandler> _packetHandlers;
         private bool _connecting = false;
         private bool _initialized = false;
         private Settings _settings = null; public Settings settings { get { return _settings; } set { _settings = value; } }
@@ -92,7 +92,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             tcp = new TCP();
             udp = new UDP();
 
-            packetHandlers = new Dictionary<int, PacketHandler>()
+            _packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 { (int)Packet.ID.INITIALIZATION, Receiver.Initialization },
                 { (int)Packet.ID.CUSTOM, Receiver.ReceiveCustom },
@@ -113,16 +113,16 @@ namespace DevelopersHub.RealtimeNetworking.Client
             {
                 socket = new TcpClient
                 {
-                    ReceiveBufferSize = dataBufferSize,
-                    SendBufferSize = dataBufferSize
+                    ReceiveBufferSize = _dataBufferSize,
+                    SendBufferSize = _dataBufferSize
                 };
-                receiveBuffer = new byte[dataBufferSize];
+                receiveBuffer = new byte[_dataBufferSize];
                 IAsyncResult result = null;
                 bool waiting = false;
                 try
                 {
                     result = socket.BeginConnect(instance.settings.ip, instance.settings.port, ConnectCallback, socket);
-                    waiting = result.AsyncWaitHandle.WaitOne(connectTimeout, false);
+                    waiting = result.AsyncWaitHandle.WaitOne(_connectTimeout, false);
                 }
                 catch (Exception)
                 {
@@ -149,7 +149,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 instance._isConnected = true;
                 stream = socket.GetStream();
                 receivedData = new Packet();
-                stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+                stream.BeginRead(receiveBuffer, 0, _dataBufferSize, ReceiveCallback, null);
             }
 
             public void SendData(Packet _packet)
@@ -180,7 +180,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                     byte[] data = new byte[length];
                     Array.Copy(receiveBuffer, data, length);
                     receivedData.Reset(CheckData(data));
-                    stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+                    stream.BeginRead(receiveBuffer, 0, _dataBufferSize, ReceiveCallback, null);
                 }
                 catch
                 {
@@ -208,7 +208,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                         using (Packet _packet = new Packet(_packetBytes))
                         {
                             int id = _packet.ReadInt();
-                            packetHandlers[id](_packet);
+                            _packetHandlers[id](_packet);
                         }
                     });
                     length = 0;
@@ -307,7 +307,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                     using (Packet _packet = new Packet(data))
                     {
                         int _packetId = _packet.ReadInt();
-                        packetHandlers[_packetId](_packet);
+                        _packetHandlers[_packetId](_packet);
                     }
                 });
             }

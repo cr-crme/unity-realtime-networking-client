@@ -30,7 +30,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         private static void SendTCPDataToAll(Packet packet)
         {
             packet.WriteLength();
-            for (int i = 1; i <= Server.MaxUsers; i++)
+            for (int i = 1; i <= Server.maxUsers; i++)
             {
                 Server.clients[i].tcp.SendData(packet);
             }
@@ -42,7 +42,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         private static void SendTCPDataToAll(int exceptClientID, Packet packet)
         {
             packet.WriteLength();
-            for (int i = 1; i <= Server.MaxUsers; i++)
+            for (int i = 1; i <= Server.maxUsers; i++)
             {
                 if (i != exceptClientID)
                 {
@@ -56,7 +56,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         private static void SendUDPDataToAll(Packet packet)
         {
             packet.WriteLength();
-            for (int i = 1; i <= Server.MaxUsers; i++)
+            for (int i = 1; i <= Server.maxUsers; i++)
             {
                 Server.clients[i].udp.SendData(packet);
             }
@@ -68,7 +68,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         private static void SendUDPDataToAll(int exceptClientID, Packet packet)
         {
             packet.WriteLength();
-            for (int i = 1; i <= Server.MaxUsers; i++)
+            for (int i = 1; i <= Server.maxUsers; i++)
             {
                 if (i != exceptClientID)
                 {

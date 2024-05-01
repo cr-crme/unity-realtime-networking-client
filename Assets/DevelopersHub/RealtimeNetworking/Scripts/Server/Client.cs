@@ -8,20 +8,20 @@ namespace DevelopersHub.RealtimeNetworking.Server
     class Client
     {
 
-        public static int dataBufferSize = 4096;
-        public int id;
+        public static int _dataBufferSize = 4096;
+        private int _id; public int id { get { return _id; } }
         public TCP tcp;
         public UDP udp;
         public string sendToken = "xxxxx";
         public string receiveToken = "xxxxx";
-        public long accountID = -1;
-        public bool disconnecting = false;
+        private long _accountID = -1; public long accountID { get { return _accountID; } }
+        private bool _disconnecting = false; public bool disconnecting { get { return _disconnecting; } } 
     
         public Client(int _clientId)
         {
-            id = _clientId;
-            tcp = new TCP(id);
-            udp = new UDP(id);
+            _id = _clientId;
+            tcp = new TCP(_id);
+            udp = new UDP(_id);
         }
 
         public class TCP
@@ -40,12 +40,12 @@ namespace DevelopersHub.RealtimeNetworking.Server
             public void Initialize(TcpClient _socket)
             {
                 socket = _socket;
-                socket.ReceiveBufferSize = dataBufferSize;
-                socket.SendBufferSize = dataBufferSize;
+                socket.ReceiveBufferSize = _dataBufferSize;
+                socket.SendBufferSize = _dataBufferSize;
                 stream = socket.GetStream();
                 receivedData = new Packet();
-                receiveBuffer = new byte[dataBufferSize];
-                stream.BeginRead(receiveBuffer, 0, dataBufferSize, IncomingData, null);
+                receiveBuffer = new byte[_dataBufferSize];
+                stream.BeginRead(receiveBuffer, 0, _dataBufferSize, IncomingData, null);
                 using (Packet packet = new Packet((int)Packet.ID.INITIALIZATION))
                 {
                     Server.clients[id].sendToken = Tools.GenerateToken();
@@ -84,7 +84,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                     byte[] data = new byte[length];
                     Array.Copy(receiveBuffer, data, length);
                     receivedData.Reset(CheckData(data));
-                    stream.BeginRead(receiveBuffer, 0, dataBufferSize, IncomingData, null);
+                    stream.BeginRead(receiveBuffer, 0, _dataBufferSize, IncomingData, null);
                 }
                 catch (Exception ex)
                 {
@@ -203,13 +203,13 @@ namespace DevelopersHub.RealtimeNetworking.Server
             {
                 Console.WriteLine("Client with IP {0} has been disconnected.", tcp.socket.Client.RemoteEndPoint);
                 IPEndPoint ip = tcp.socket.Client.RemoteEndPoint as IPEndPoint;
-                RealtimeNetworking._ClientDisconnected(id, ip.Address.ToString());
+                RealtimeNetworking._ClientDisconnected(_id, ip.Address.ToString());
                 tcp.Disconnect();
             }
             else
             {
                 Console.WriteLine("Client with unkown IP has been disconnected.");
-                RealtimeNetworking._ClientDisconnected(id, "unknown");
+                RealtimeNetworking._ClientDisconnected(_id, "unknown");
             }
             if (udp.endPoint != null)
             {

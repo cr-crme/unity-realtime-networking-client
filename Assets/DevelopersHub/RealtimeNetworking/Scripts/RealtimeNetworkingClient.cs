@@ -1,14 +1,17 @@
 
-namespace DevelopersHub.RealtimeNetworking.Client{
-    using UnityEngine;
+namespace DevelopersHub.RealtimeNetworking.Client
+{
+    using System.Collections;
+    using System.Collections.Generic;
     using DevelopersHub.RealtimeNetworking.Common;
+    using UnityEngine;
 
     public class RealtimeNetworkingClient : MonoBehaviour
     {        
-        [SerializeField] private Transform ObjectToMove;
+        [SerializeField] private List<Transform> _objectsToMove;
 
-        private bool _IsConnected = false;
-        private float _TimeStamp = 0.0f; 
+        private bool _isConnected = false;
+        private float _timeStamp = 0.0f; 
 
         // Start is called before the first frame update
         void Start()
@@ -21,30 +24,34 @@ namespace DevelopersHub.RealtimeNetworking.Client{
 
         void FixedUpdate()
         {
-            if (!_IsConnected) return;
+            if (!_isConnected) return;
 
             try
             {
                 var packet = new Packet();
                 packet.Write((int)PacketType.CsvWriterDataEntry);
-                packet.Write(_TimeStamp);
-                packet.Write(ObjectToMove.localPosition);
-                packet.Write(ObjectToMove.localRotation.eulerAngles);
+                packet.Write(_timeStamp);
+                foreach (var item in _objectsToMove)
+                {
+                    packet.Write(item.localPosition);
+                    packet.Write(item.localRotation.eulerAngles);
+                }
                 Sender.TCP_Send(packet);
+
             } catch (System.Exception e)
             {
                 Debug.Log("Error sending packet: " + e.Message);
                 TryConnecting();
             }
 
-            _TimeStamp += Time.fixedDeltaTime;
+            _timeStamp += Time.fixedDeltaTime;
         }
 
         void OnConnectionResult(bool success)
         {
-            _IsConnected = success;
+            _isConnected = success;
 
-            if (_IsConnected)
+            if (_isConnected)
             {
                 Debug.Log("Connected to server");
                 RealtimeNetworking.OnConnectingToServerResult -= OnConnectionResult;
@@ -53,8 +60,8 @@ namespace DevelopersHub.RealtimeNetworking.Client{
 
         void TryConnecting()
         {
-            _IsConnected = false;
-            _TimeStamp = 0.0f;
+            _isConnected = false;
+            _timeStamp = 0.0f;
             RealtimeNetworking.OnConnectingToServerResult += OnConnectionResult;
 
             StartCoroutine(TryConnectingCoroutine());
@@ -65,7 +72,7 @@ namespace DevelopersHub.RealtimeNetworking.Client{
             // Just make sure it is disconnected
             RealtimeNetworking.Disconnect();
 
-            while (!_IsConnected)
+            while (!_isConnected)
             {
                 Debug.Log("Trying to Connect...");
                 RealtimeNetworking.Connect();

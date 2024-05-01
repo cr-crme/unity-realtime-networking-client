@@ -15,23 +15,23 @@ namespace DevelopersHub.RealtimeNetworking.Common
         [SerializeField] private Button stopButton;
 
         string FilePath { get { return Path.Combine(Application.persistentDataPath, subjectNameInput.text, $"{trialNameInput.text}.csv"); } }
-        private StreamWriter fileWriter;
+        private StreamWriter _fileWriter;
         
-        private bool isRecording = false;
-        private List<string> dataQueue = new List<string>();
-        private int frameCount = 0;
-        private const int framesPerFlush = 100;
+        private bool _isRecording = false;
+        private List<string> _dataQueue = new List<string>();
+        private int _frameCount = 0;
+        private const int _framesPerFlush = 100;
         private readonly object _lock = new object(); 
 
         public class PoseVectors
         {
-            public System.Numerics.Vector3 Position { get; }
-            public System.Numerics.Vector3 Rotation { get; }
+            public System.Numerics.Vector3 position { get; }
+            public System.Numerics.Vector3 rotation { get; }
             
             public PoseVectors(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)
             {
-                Position = position;
-                Rotation = rotation;
+                this.position = position;
+                this.rotation = rotation;
             }
 
         }
@@ -39,7 +39,7 @@ namespace DevelopersHub.RealtimeNetworking.Common
         public class DataEntry
         {
             public float Timestamp { get; }
-            public List<PoseVectors> Poses { get; } = new List<PoseVectors>();
+            public List<PoseVectors> poses { get; } = new List<PoseVectors>();
 
             public DataEntry(float timestamp)
             {
@@ -55,10 +55,10 @@ namespace DevelopersHub.RealtimeNetworking.Common
             public override string ToString()
             {
                 var _out = $"{Timestamp:F6}";
-                foreach (var item in Poses)
+                foreach (var item in poses)
                 {
-                    _out += $",{item.Position.X:F6},{item.Position.Y:F6},{item.Position.Z:F6}";
-                    _out += $",{item.Rotation.X:F6},{item.Rotation.Y:F6},{item.Rotation.Z:F6}";
+                    _out += $",{item.position.X:F6},{item.position.Y:F6},{item.position.Z:F6}";
+                    _out += $",{item.rotation.X:F6},{item.rotation.Y:F6},{item.rotation.Z:F6}";
                 }
                 return _out;
             }
@@ -96,24 +96,24 @@ namespace DevelopersHub.RealtimeNetworking.Common
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
 
-            fileWriter = new StreamWriter(FilePath);
-            fileWriter.WriteLine(DataEntry.Header);
+            _fileWriter = new StreamWriter(FilePath);
+            _fileWriter.WriteLine(DataEntry.Header);
 
             startButton.interactable = false;
             startButton.gameObject.SetActive(false);
             stopButton.interactable = true;
             stopButton.gameObject.SetActive(true);
 
-            isRecording = true;
+            _isRecording = true;
         }
 
         public void StopRecording()
         {
-            if (fileWriter != null)
+            if (_fileWriter != null)
             {
                 FlushDataToFile();
-                fileWriter.Close();
-                fileWriter = null;
+                _fileWriter.Close();
+                _fileWriter = null;
             }
 
             startButton.interactable = true;
@@ -121,12 +121,12 @@ namespace DevelopersHub.RealtimeNetworking.Common
             stopButton.interactable = false;
             stopButton.gameObject.SetActive(false);
 
-            isRecording = false;
+            _isRecording = false;
         }
 
         public void AddData(DataEntry data)
         {
-            if (!isRecording)
+            if (!_isRecording)
             {
                 return;
             }
@@ -134,11 +134,11 @@ namespace DevelopersHub.RealtimeNetworking.Common
             // Add data to the queue
             lock (_lock)
             {
-                dataQueue.Add(data.ToString());
+                _dataQueue.Add(data.ToString());
 
                 // Flush data to file every framesPerFlush frames
-                frameCount++;
-                if (frameCount >= framesPerFlush)
+                _frameCount++;
+                if (_frameCount >= _framesPerFlush)
                 {
                     FlushDataToFile();
                 }
@@ -149,14 +149,14 @@ namespace DevelopersHub.RealtimeNetworking.Common
         {
             lock (_lock)
             {
-                foreach (var data in dataQueue)
+                foreach (var data in _dataQueue)
                 {
-                    fileWriter.WriteLine(data);
+                    _fileWriter.WriteLine(data);
                 }
 
-                fileWriter.Flush();
-                dataQueue.Clear();
-                frameCount = 0;
+                _fileWriter.Flush();
+                _dataQueue.Clear();
+                _frameCount = 0;
             }
 
         }

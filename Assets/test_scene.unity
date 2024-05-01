@@ -1396,7 +1396,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1719198246
 Transform:
   m_ObjectHideFlags: 0
@@ -1425,7 +1425,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ed80c2bf0f47c488008683ae666c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToMove: {fileID: 1909437609}
+  _objectsToMove:
+  - {fileID: 1909437609}
 --- !u!1 &1860406659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,7 +1443,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1860406660
 Transform:
   m_ObjectHideFlags: 0
@@ -1471,9 +1472,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e608223e708daebbf6c82a838c6a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectsToMove:
+  _objectsToMove:
   - {fileID: 463734685}
-  ObjectToSave: {fileID: 1251131417}
+  _objectToSave: {fileID: 1251131417}
 --- !u!1 &1909437606
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,20 +9,20 @@ namespace DevelopersHub.RealtimeNetworking.Server
     class Server
     {
 
-        public static int MaxUsers { get; private set; }
-        public static int Port { get; private set; }
+        public static int maxUsers { get; private set; }
+        public static int port { get; private set; }
         public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
         public delegate void PacketHandler(int clientID, Packet packet);
         public static Dictionary<int, PacketHandler> packetHandlers;
 
-        private static TcpListener tcpListener;
-        private static UdpClient udpListener;
+        private static TcpListener _tcpListener;
+        private static UdpClient _udpListener;
 
         public static void Start(int maxUsers, int port)
         {
-            MaxUsers = maxUsers;
-            Port = port;
-            for (int i = 1; i <= MaxUsers; i++)
+            Server.maxUsers = maxUsers;
+            Server.port = port;
+            for (int i = 1; i <= Server.maxUsers; i++)
             {
                 clients.Add(i, new Client(i));
             }
@@ -32,22 +32,22 @@ namespace DevelopersHub.RealtimeNetworking.Server
                 { (int)Packet.ID.CUSTOM, Receiver.ReceiveCustom },
                 { (int)Packet.ID.INTERNAL, Receiver.ReceiveInternal },
             };
-            tcpListener = new TcpListener(IPAddress.Any, Port);
-            tcpListener.Start();
-            tcpListener.BeginAcceptTcpClient(OnConnectedTCP, null);
-            if (RealtimeNetworking.UdpActive)
+            _tcpListener = new TcpListener(IPAddress.Any, Server.port);
+            _tcpListener.Start();
+            _tcpListener.BeginAcceptTcpClient(OnConnectedTCP, null);
+            if (RealtimeNetworking.udpActive)
             {
-                udpListener = new UdpClient(Port);
-                udpListener.BeginReceive(OnConnectedUDP, null);
+                _udpListener = new UdpClient(Server.port);
+                _udpListener.BeginReceive(OnConnectedUDP, null);
             }
         }
 
         private static void OnConnectedTCP(IAsyncResult result)
         {
-            TcpClient client = tcpListener.EndAcceptTcpClient(result);
-            tcpListener.BeginAcceptTcpClient(OnConnectedTCP, null);
+            TcpClient client = _tcpListener.EndAcceptTcpClient(result);
+            _tcpListener.BeginAcceptTcpClient(OnConnectedTCP, null);
             Console.WriteLine("Incoming connection from {0}.", client.Client.RemoteEndPoint);
-            for (int i = 1; i <= MaxUsers; i++)
+            for (int i = 1; i <= maxUsers; i++)
             {
                 if (clients[i].tcp.socket == null && clients[i].accountID < 0 && clients[i].disconnecting == false)
                 {
@@ -65,8 +65,8 @@ namespace DevelopersHub.RealtimeNetworking.Server
             try
             {
                 IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                byte[] data = udpListener.EndReceive(result, ref clientEndPoint);
-                udpListener.BeginReceive(OnConnectedUDP, null);
+                byte[] data = _udpListener.EndReceive(result, ref clientEndPoint);
+                _udpListener.BeginReceive(OnConnectedUDP, null);
                 if (data.Length < 4)
                 {
                     return;
@@ -101,7 +101,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             {
                 if (clientEndPoint != null)
                 {
-                    udpListener.BeginSend(packet.ToArray(), packet.Length(), clientEndPoint, null, null);
+                    _udpListener.BeginSend(packet.ToArray(), packet.Length(), clientEndPoint, null, null);
                 }
             }
             catch (Exception ex)

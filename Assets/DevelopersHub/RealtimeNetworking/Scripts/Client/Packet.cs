@@ -12,28 +12,28 @@ namespace DevelopersHub.RealtimeNetworking.Client
             INITIALIZATION = 1, CUSTOM = 2, INTERNAL = 3
         }
 
-        private List<byte> buffer;
-        private byte[] readableBuffer;
-        private int readPos;
+        private List<byte> _buffer;
+        private byte[] _readableBuffer;
+        private int _readPos;
 
         public void SetID(int id)
         {
-            buffer.InsertRange(0, BitConverter.GetBytes(id));
+            _buffer.InsertRange(0, BitConverter.GetBytes(id));
         }
 
         /// <summary>Creates a new empty packet (without an ID).</summary>
         public Packet()
         {
-            buffer = new List<byte>(); // Initialize buffer
-            readPos = 0; // Set readPos to 0
+            _buffer = new List<byte>(); // Initialize buffer
+            _readPos = 0; // Set readPos to 0
         }
 
         /// <summary>Creates a new packet with a given ID. Used for sending.</summary>
         /// <param name="_id">The packet ID.</param>
         public Packet(int _id)
         {
-            buffer = new List<byte>(); // Initialize buffer
-            readPos = 0; // Set readPos to 0
+            _buffer = new List<byte>(); // Initialize buffer
+            _readPos = 0; // Set readPos to 0
             Write(_id); // Write packet id to the buffer
         }
 
@@ -41,8 +41,8 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_data">The bytes to add to the packet.</param>
         public Packet(byte[] _data)
         {
-            buffer = new List<byte>(); // Initialize buffer
-            readPos = 0; // Set readPos to 0
+            _buffer = new List<byte>(); // Initialize buffer
+            _readPos = 0; // Set readPos to 0
             SetBytes(_data);
         }
 
@@ -52,39 +52,39 @@ namespace DevelopersHub.RealtimeNetworking.Client
         public void SetBytes(byte[] _data)
         {
             Write(_data);
-            readableBuffer = buffer.ToArray();
+            _readableBuffer = _buffer.ToArray();
         }
 
         /// <summary>Inserts the length of the packet's content at the start of the buffer.</summary>
         public void WriteLength()
         {
-            buffer.InsertRange(0, BitConverter.GetBytes(buffer.Count)); // Insert the byte length of the packet at the very beginning
+            _buffer.InsertRange(0, BitConverter.GetBytes(_buffer.Count)); // Insert the byte length of the packet at the very beginning
         }
 
         /// <summary>Inserts the given int at the start of the buffer.</summary>
         /// <param name="_value">The int to insert.</param>
         public void InsertInt(int _value)
         {
-            buffer.InsertRange(0, BitConverter.GetBytes(_value)); // Insert the int at the start of the buffer
+            _buffer.InsertRange(0, BitConverter.GetBytes(_value)); // Insert the int at the start of the buffer
         }
 
         /// <summary>Gets the packet's content in array form.</summary>
         public byte[] ToArray()
         {
-            readableBuffer = buffer.ToArray();
-            return readableBuffer;
+            _readableBuffer = _buffer.ToArray();
+            return _readableBuffer;
         }
 
         /// <summary>Gets the length of the packet's content.</summary>
         public int Length()
         {
-            return buffer.Count; // Return the length of buffer
+            return _buffer.Count; // Return the length of buffer
         }
 
         /// <summary>Gets the length of the unread data contained in the packet.</summary>
         public int UnreadLength()
         {
-            return Length() - readPos; // Return the remaining length (unread)
+            return Length() - _readPos; // Return the remaining length (unread)
         }
 
         /// <summary>Resets the packet instance to allow it to be reused.</summary>
@@ -93,13 +93,13 @@ namespace DevelopersHub.RealtimeNetworking.Client
         {
             if (_shouldReset)
             {
-                buffer.Clear(); // Clear buffer
-                readableBuffer = null;
-                readPos = 0; // Reset readPos
+                _buffer.Clear(); // Clear buffer
+                _readableBuffer = null;
+                _readPos = 0; // Reset readPos
             }
             else
             {
-                readPos -= 4; // "Unread" the last read int
+                _readPos -= 4; // "Unread" the last read int
             }
         }
         #endregion
@@ -109,56 +109,56 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_value">The byte to add.</param>
         public void Write(byte _value)
         {
-            buffer.Add(_value);
+            _buffer.Add(_value);
         }
 
         /// <summary>Adds an array of bytes to the packet.</summary>
         /// <param name="_value">The byte array to add.</param>
         public void Write(byte[] _value)
         {
-            buffer.AddRange(_value);
+            _buffer.AddRange(_value);
         }
 
         /// <summary>Adds a short to the packet.</summary>
         /// <param name="_value">The short to add.</param>
         public void Write(short _value)
         {
-            buffer.AddRange(BitConverter.GetBytes(_value));
+            _buffer.AddRange(BitConverter.GetBytes(_value));
         }
 
         /// <summary>Adds an int to the packet.</summary>
         /// <param name="_value">The int to add.</param>
         public void Write(int _value)
         {
-            buffer.AddRange(BitConverter.GetBytes(_value));
+            _buffer.AddRange(BitConverter.GetBytes(_value));
         }
 
         /// <summary>Adds a long to the packet.</summary>
         /// <param name="_value">The long to add.</param>
         public void Write(long _value)
         {
-            buffer.AddRange(BitConverter.GetBytes(_value));
+            _buffer.AddRange(BitConverter.GetBytes(_value));
         }
 
         /// <summary>Adds a float to the packet.</summary>
         /// <param name="_value">The float to add.</param>
         public void Write(float _value)
         {
-            buffer.AddRange(BitConverter.GetBytes(_value));
+            _buffer.AddRange(BitConverter.GetBytes(_value));
         }
 
         /// <summary>Adds a double to the packet.</summary>
         /// <param name="_value">The double to add.</param>
         public void Write(double _value)
         {
-            buffer.AddRange(BitConverter.GetBytes(_value));
+            _buffer.AddRange(BitConverter.GetBytes(_value));
         }
 
         /// <summary>Adds a bool to the packet.</summary>
         /// <param name="_value">The bool to add.</param>
         public void Write(bool _value)
         {
-            buffer.AddRange(BitConverter.GetBytes(_value));
+            _buffer.AddRange(BitConverter.GetBytes(_value));
         }
 
         /// <summary>Adds a string to the packet.</summary>
@@ -166,7 +166,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
         public void Write(string _value)
         {
             Write(_value.Length); // Add the length of the string to the packet
-            buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+            _buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
         }
 
         /// <summary>Adds a Vector3 to the packet.</summary>
@@ -208,14 +208,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public byte ReadByte(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                byte _value = readableBuffer[readPos]; // Get the byte at readPos' position
+                byte _value = _readableBuffer[_readPos]; // Get the byte at readPos' position
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += 1; // Increase readPos by 1
+                    _readPos += 1; // Increase readPos by 1
                 }
                 return _value; // Return the byte
             }
@@ -230,14 +230,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public byte[] ReadBytes(int _length, bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                byte[] _value = buffer.GetRange(readPos, _length).ToArray(); // Get the bytes at readPos' position with a range of _length
+                byte[] _value = _buffer.GetRange(_readPos, _length).ToArray(); // Get the bytes at readPos' position with a range of _length
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += _length; // Increase readPos by _length
+                    _readPos += _length; // Increase readPos by _length
                 }
                 return _value; // Return the bytes
             }
@@ -251,14 +251,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public short ReadShort(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                short _value = BitConverter.ToInt16(readableBuffer, readPos); // Convert the bytes to a short
+                short _value = BitConverter.ToInt16(_readableBuffer, _readPos); // Convert the bytes to a short
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true and there are unread bytes
-                    readPos += 2; // Increase readPos by 2
+                    _readPos += 2; // Increase readPos by 2
                 }
                 return _value; // Return the short
             }
@@ -272,14 +272,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public int ReadInt(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                int _value = BitConverter.ToInt32(readableBuffer, readPos); // Convert the bytes to an int
+                int _value = BitConverter.ToInt32(_readableBuffer, _readPos); // Convert the bytes to an int
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += 4; // Increase readPos by 4
+                    _readPos += 4; // Increase readPos by 4
                 }
                 return _value; // Return the int
             }
@@ -293,14 +293,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public long ReadLong(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                long _value = BitConverter.ToInt64(readableBuffer, readPos); // Convert the bytes to a long
+                long _value = BitConverter.ToInt64(_readableBuffer, _readPos); // Convert the bytes to a long
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += 8; // Increase readPos by 8
+                    _readPos += 8; // Increase readPos by 8
                 }
                 return _value; // Return the long
             }
@@ -314,14 +314,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public float ReadFloat(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                float _value = BitConverter.ToSingle(readableBuffer, readPos); // Convert the bytes to a float
+                float _value = BitConverter.ToSingle(_readableBuffer, _readPos); // Convert the bytes to a float
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += 4; // Increase readPos by 4
+                    _readPos += 4; // Increase readPos by 4
                 }
                 return _value; // Return the float
             }
@@ -335,14 +335,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public double ReadDouble(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                double _value = BitConverter.ToSingle(readableBuffer, readPos); // Convert the bytes to a double
+                double _value = BitConverter.ToSingle(_readableBuffer, _readPos); // Convert the bytes to a double
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += 8; // Increase readPos by 8
+                    _readPos += 8; // Increase readPos by 8
                 }
                 return _value; // Return the double
             }
@@ -356,14 +356,14 @@ namespace DevelopersHub.RealtimeNetworking.Client
         /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
         public bool ReadBool(bool _moveReadPos = true)
         {
-            if (buffer.Count > readPos)
+            if (_buffer.Count > _readPos)
             {
                 // If there are unread bytes
-                bool _value = BitConverter.ToBoolean(readableBuffer, readPos); // Convert the bytes to a bool
+                bool _value = BitConverter.ToBoolean(_readableBuffer, _readPos); // Convert the bytes to a bool
                 if (_moveReadPos)
                 {
                     // If _moveReadPos is true
-                    readPos += 1; // Increase readPos by 1
+                    _readPos += 1; // Increase readPos by 1
                 }
                 return _value; // Return the bool
             }
@@ -380,11 +380,11 @@ namespace DevelopersHub.RealtimeNetworking.Client
             try
             {
                 int _length = ReadInt(); // Get the length of the string
-                string _value = Encoding.ASCII.GetString(readableBuffer, readPos, _length); // Convert the bytes to a string
+                string _value = Encoding.ASCII.GetString(_readableBuffer, _readPos, _length); // Convert the bytes to a string
                 if (_moveReadPos && _value.Length > 0)
                 {
                     // If _moveReadPos is true string is not empty
-                    readPos += _length; // Increase readPos by the length of the string
+                    _readPos += _length; // Increase readPos by the length of the string
                 }
                 return _value; // Return the string
             }
@@ -417,9 +417,9 @@ namespace DevelopersHub.RealtimeNetworking.Client
             {
                 if (_disposing)
                 {
-                    buffer = null;
-                    readableBuffer = null;
-                    readPos = 0;
+                    _buffer = null;
+                    _readableBuffer = null;
+                    _readPos = 0;
                 }
                 disposed = true;
             }
