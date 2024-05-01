@@ -154,16 +154,9 @@ namespace DevelopersHub.RealtimeNetworking.Client
 
             public void SendData(Packet _packet)
             {
-                try
+                if (socket != null)
                 {
-                    if (socket != null)
-                    {
-                        stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.Log($"Error sending data to server via TCP: {ex}");
+                    stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                 }
             }
 

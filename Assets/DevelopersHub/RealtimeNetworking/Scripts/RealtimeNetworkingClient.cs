@@ -40,7 +40,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
 
             } catch (System.Exception e)
             {
-                Debug.Log("Error sending packet: " + e.Message);
+                Debug.Log("Connection lost");
                 TryConnecting();
             }
 
