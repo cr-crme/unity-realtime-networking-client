@@ -23,17 +23,27 @@ namespace DevelopersHub.RealtimeNetworking.Common
         private const int framesPerFlush = 100;
         private readonly object _lock = new object(); 
 
+        public class PoseVectors
+        {
+            public System.Numerics.Vector3 Position { get; }
+            public System.Numerics.Vector3 Rotation { get; }
+            
+            public PoseVectors(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)
+            {
+                Position = position;
+                Rotation = rotation;
+            }
+
+        }
+
         public class DataEntry
         {
             public float Timestamp { get; }
-            public System.Numerics.Vector3 Position { get; }
-            public System.Numerics.Vector3 Rotation { get; }
+            public List<PoseVectors> Poses { get; } = new List<PoseVectors>();
 
-            public DataEntry(float timestamp, System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)
+            public DataEntry(float timestamp)
             {
                 Timestamp = timestamp;
-                Position = position;
-                Rotation = rotation;
             }
 
             public static string Header { 
@@ -44,7 +54,13 @@ namespace DevelopersHub.RealtimeNetworking.Common
 
             public override string ToString()
             {
-                return $"{Timestamp:F6},{Position.X:F6},{Position.Y:F6},{Position.Z:F6},{Rotation.X:F6},{Rotation.Y:F6},{Rotation.Z:F6}";
+                var _out = $"{Timestamp:F6}";
+                foreach (var item in Poses)
+                {
+                    _out += $",{item.Position.X:F6},{item.Position.Y:F6},{item.Position.Z:F6}";
+                    _out += $",{item.Rotation.X:F6},{item.Rotation.Y:F6},{item.Rotation.Z:F6}";
+                }
+                return _out;
             }
         }
 

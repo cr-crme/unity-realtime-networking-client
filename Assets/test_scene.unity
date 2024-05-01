@@ -1471,7 +1471,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e608223e708daebbf6c82a838c6a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToMove: {fileID: 463734685}
+  ObjectsToMove:
+  - {fileID: 463734685}
   ObjectToSave: {fileID: 1251131417}
 --- !u!1 &1909437606
 GameObject:
