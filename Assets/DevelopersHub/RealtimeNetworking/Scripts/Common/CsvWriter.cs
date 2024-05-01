@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Numerics;
 using System.IO;
 using UnityEngine;
@@ -43,12 +44,14 @@ namespace DevelopersHub.RealtimeNetworking.Common
 
             public override string ToString()
             {
-                return $"{Timestamp},{Position.X},{Position.Y},{Position.Z},{Rotation.X},{Rotation.Y},{Rotation.Z}";
+                return $"{Timestamp:F6},{Position.X:F6},{Position.Y:F6},{Position.Z:F6},{Rotation.X:F6},{Rotation.Y:F6},{Rotation.Z:F6}";
             }
         }
 
         void Start()
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // Force the "." to be the decimal separator
+
             startButton.interactable = false;
             startButton.gameObject.SetActive(true);
             stopButton.interactable = false;

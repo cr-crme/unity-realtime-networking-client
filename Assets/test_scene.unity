@@ -1472,7 +1472,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectToMove: {fileID: 463734685}
-  ObjectToSave: {fileID: 0}
+  ObjectToSave: {fileID: 1251131417}
 --- !u!1 &1909437606
 GameObject:
   m_ObjectHideFlags: 0
