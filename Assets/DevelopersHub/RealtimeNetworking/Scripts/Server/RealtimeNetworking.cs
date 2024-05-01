@@ -32,6 +32,11 @@ namespace DevelopersHub.RealtimeNetworking.Server
             Server.Start(maxUsers, port);
         }
 
+        public static void Destroy()
+        {
+            Server.Stop();
+        }
+
         public static void _ClientConnected(int id, string ip)
         {
             if (OnClientConnected != null)

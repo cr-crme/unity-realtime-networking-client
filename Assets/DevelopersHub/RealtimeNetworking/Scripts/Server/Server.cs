@@ -42,6 +42,22 @@ namespace DevelopersHub.RealtimeNetworking.Server
             }
         }
 
+        public static void Stop()
+        {
+            for (int i = 1; i <= maxUsers; i++)
+            {
+                clients[i].tcp?.Disconnect();
+                clients[i].udp?.Disconnect();
+            }
+            clients.Clear();
+            
+            _tcpListener?.Stop();
+            _tcpListener = null;
+
+            _udpListener?.Close();
+            _udpListener = null;
+        }
+
         private static void OnConnectedTCP(IAsyncResult result)
         {
             TcpClient client = _tcpListener.EndAcceptTcpClient(result);

@@ -89,7 +89,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                 catch (Exception ex)
                 {
                     Tools.LogError(ex.Message, ex.StackTrace);
-                    Server.clients[id].Disconnect();
+                    Disconnect();
                 }
             }
 
@@ -142,7 +142,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
 
             public void Disconnect()
             {
-                socket.Close();
+                socket?.Close();
                 stream = null;
                 receivedData = null;
                 receiveBuffer = null;

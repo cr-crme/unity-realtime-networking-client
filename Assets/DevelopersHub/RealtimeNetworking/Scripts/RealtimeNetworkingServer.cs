@@ -26,6 +26,11 @@ namespace DevelopersHub.RealtimeNetworking.Server{
             Threading.UpdateMain();
         }
 
+        void OnDestroy()
+        {
+            RealtimeNetworking.Destroy();
+        }
+
 
         void ClientConnected(int id, string ip)
         {
@@ -60,6 +65,7 @@ namespace DevelopersHub.RealtimeNetworking.Server{
                     _objectToSave.AddData(dataToWrite);
 
                     break;
+
                 default:
                     Debug.Log("Unknown packet type.");
                     break;
