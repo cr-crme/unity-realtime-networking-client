@@ -31,11 +31,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             {
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<RealtimeNetworking>();
-                    if (_instance == null)
-                    {
-                        _instance = Client.instance.gameObject.AddComponent<RealtimeNetworking>();
-                    }
+                    _instance = new RealtimeNetworking();
                     _instance.Initialize();
                 }
                 return _instance;
@@ -52,9 +48,9 @@ namespace DevelopersHub.RealtimeNetworking.Client
             _initialized = true;
         }
 
-        public static void Connect()
+        public static void Connect(string ip, int port)
         {
-            Client.instance.ConnectToServer();
+            Client.instance.ConnectToServer(ip, port);
         }
 
         public static void Disconnect()

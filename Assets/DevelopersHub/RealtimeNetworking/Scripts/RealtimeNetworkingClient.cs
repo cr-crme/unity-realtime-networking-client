@@ -9,6 +9,8 @@ namespace DevelopersHub.RealtimeNetworking.Client
     public class RealtimeNetworkingClient : MonoBehaviour
     {        
         [SerializeField] private List<Transform> _objectsToMove;
+        [SerializeField] private string _serverIp = "127.0.0.1";
+        [SerializeField] private int _serverPort = 5555;
 
         private bool _isConnected = false;
         private float _timeStamp = 0.0f; 
@@ -22,9 +24,17 @@ namespace DevelopersHub.RealtimeNetworking.Client
             TryConnecting();
         }
 
+        // Update is called once per frame
+        void Update()
+        {
+            
+        }
+
         void FixedUpdate()
         {
             if (!_isConnected) return;
+
+            Threading.UpdateMain();
 
             try
             {
@@ -75,7 +85,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             while (!_isConnected)
             {
                 Debug.Log("Trying to Connect...");
-                RealtimeNetworking.Connect();
+                RealtimeNetworking.Connect(_serverIp, _serverPort);
                 // Pause for a second before trying to reconnect
                 yield return new WaitForSeconds(1);
             }
@@ -87,10 +97,10 @@ namespace DevelopersHub.RealtimeNetworking.Client
             Debug.Log("Packet received: " + packet.ReadString());
         }
 
-        // Update is called once per frame
-        void Update()
+        
+        private void OnApplicationQuit()
         {
-            
+            RealtimeNetworking.Disconnect();
         }
     }
 }

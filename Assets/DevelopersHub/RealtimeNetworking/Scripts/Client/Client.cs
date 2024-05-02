@@ -1,14 +1,13 @@
 namespace DevelopersHub.RealtimeNetworking.Client
 {
     using System.Collections.Generic;
-    using UnityEngine;
     using System.Net;
     using System.Net.Sockets;
     using System;
     using System.Linq;
     using DevelopersHub.RealtimeNetworking.Common;
 
-    public class Client : MonoBehaviour
+    public class Client
     {
 
         private static int _dataBufferSize = 4096;
@@ -22,65 +21,21 @@ namespace DevelopersHub.RealtimeNetworking.Client
         private delegate void PacketHandler(Packet _packet);
         private static Dictionary<int, PacketHandler> _packetHandlers;
         private bool _connecting = false;
-        private bool _initialized = false;
-        private Settings _settings = null; public Settings settings { get { return _settings; } set { _settings = value; } }
-
+        
         private static Client _instance = null; public static Client instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<Client>();
-                    if (_instance == null)
-                    {
-                        _instance = new GameObject("Client").AddComponent<Client>();
-                    }
-                    _instance.Initialize();
+                    _instance = new Client();
                 }
                 return _instance;
             }
         }
 
-        private void Awake()
-        {
-            Initialize();
-        }
 
-        private void Initialize()
-        {
-            if (_initialized)
-            {
-                return;
-            }
-            _initialized = true;
-            try
-            {
-                var resources = Resources.LoadAll("", typeof(Settings)).Cast<Settings>();
-                foreach (var s in resources)
-                {
-                    settings = s;
-                    break;
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError(ex.Message);
-            }
-            DontDestroyOnLoad(gameObject);
-        }
-
-        private void Update()
-        {
-            Threading.UpdateMain();
-        }
-
-        private void OnApplicationQuit()
-        {
-            Disconnect();
-        }
-
-        public void ConnectToServer()
+        public void ConnectToServer(string ip, int port)
         {
             if (_isConnected || _connecting)
             {
@@ -90,7 +45,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             _connecting = true;
 
             tcp = new TCP();
-            udp = new UDP();
+            udp = new UDP(ip, port);
 
             _packetHandlers = new Dictionary<int, PacketHandler>()
             {
@@ -99,7 +54,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 { (int)Packet.ID.INTERNAL, Receiver.ReceiveInternal },
             };
 
-            tcp.Connect();
+            tcp.Connect(ip, port);
         }
 
         public class TCP
@@ -109,7 +64,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
             private Packet receivedData;
             private byte[] receiveBuffer;
 
-            public void Connect()
+            public void Connect(string ip, int port)
             {
                 socket = new TcpClient
                 {
@@ -121,7 +76,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 bool waiting = false;
                 try
                 {
-                    result = socket.BeginConnect(instance.settings.ip, instance.settings.port, ConnectCallback, socket);
+                    result = socket.BeginConnect(ip, port, ConnectCallback, socket);
                     waiting = result.AsyncWaitHandle.WaitOne(_connectTimeout, false);
                 }
                 catch (Exception)
@@ -237,9 +192,9 @@ namespace DevelopersHub.RealtimeNetworking.Client
             public UdpClient socket;
             public IPEndPoint endPoint;
 
-            public UDP()
+            public UDP(string ip, int port)
             {
-                endPoint = new IPEndPoint(IPAddress.Parse(instance.settings.ip), instance.settings.port);
+                endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
             }
 
             public void Connect(int port)
@@ -265,7 +220,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log($"Error sending data to server via UDP: {ex}");
+                    Console.WriteLine($"Error sending data to server via UDP: {ex}");
                 }
             }
 
