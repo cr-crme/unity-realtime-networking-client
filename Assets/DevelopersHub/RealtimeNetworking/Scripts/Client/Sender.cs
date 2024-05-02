@@ -4,7 +4,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class Sender : MonoBehaviour
+    public class Sender
     {
 
         #region Core

@@ -7,7 +7,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
-    public class RealtimeNetworking : MonoBehaviour
+    public class RealtimeNetworking
     {
 
         #region Events

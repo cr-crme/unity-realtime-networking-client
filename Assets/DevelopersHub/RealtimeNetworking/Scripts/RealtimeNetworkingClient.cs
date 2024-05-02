@@ -32,9 +32,9 @@ namespace DevelopersHub.RealtimeNetworking.Client
 
         void FixedUpdate()
         {
-            if (!_isConnected) return;
-
             Threading.UpdateMain();
+
+            if (!_isConnected) return;
 
             try
             {

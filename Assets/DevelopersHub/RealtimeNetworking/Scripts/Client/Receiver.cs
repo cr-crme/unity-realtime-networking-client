@@ -4,7 +4,7 @@ namespace DevelopersHub.RealtimeNetworking.Client
     using UnityEngine;
     using DevelopersHub.RealtimeNetworking.Common;
 
-    public class Receiver : MonoBehaviour
+    public class Receiver
     {
 
         public static void Initialization(Packet packet)
