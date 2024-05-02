@@ -2,6 +2,7 @@ namespace DevelopersHub.RealtimeNetworking.Server{
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
+    using UnityEngine.UI;
     using DevelopersHub.RealtimeNetworking.Common;
     using DevelopersHub.RealtimeNetworking.Server;
         
@@ -9,10 +10,13 @@ namespace DevelopersHub.RealtimeNetworking.Server{
     {
         [SerializeField] private List<Transform> _objectsToMove;
         [SerializeField] private CsvWriter _objectToSave;
+        [SerializeField] private Text _ipAddressText;
 
         // Start is called before the first frame update
         void Start()
         {
+            ShowIpAddress();
+
             RealtimeNetworking.Initialize();
 
             RealtimeNetworking.OnClientConnected += ClientConnected;
@@ -31,6 +35,21 @@ namespace DevelopersHub.RealtimeNetworking.Server{
             RealtimeNetworking.Destroy();
         }
 
+        void ShowIpAddress()
+        {
+            List<string> ipAddresses = Tools.FindCurrentIPs();
+            if (ipAddresses.Count > 1)
+            {
+                _ipAddressText.text = "Trop d'adresses IP trouvées";
+            } else if (ipAddresses.Count == 0)
+            {
+                _ipAddressText.text = "Aucune adresse IP trouvée";
+            } else
+            {
+                _ipAddressText.text = ipAddresses[0];
+            }
+
+        }
 
         void ClientConnected(int id, string ip)
         {

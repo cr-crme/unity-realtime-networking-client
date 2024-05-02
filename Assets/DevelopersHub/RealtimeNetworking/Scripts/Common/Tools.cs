@@ -7,6 +7,7 @@ namespace DevelopersHub.RealtimeNetworking.Common
     using System.IO.Compression;
     using System.Net.Sockets;
     using System.Net;
+    using System.Net.NetworkInformation; 
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading.Tasks;
@@ -79,6 +80,25 @@ namespace DevelopersHub.RealtimeNetworking.Common
             {
                 target.Write(bytes, 0, count);
             }
+        }
+
+        public static List<string> FindCurrentIPs()
+        {
+            List<string> ipAddresses = new List<string>();
+            foreach (NetworkInterface netInterface in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (netInterface.OperationalStatus == OperationalStatus.Up)
+                {
+                    foreach (UnicastIPAddressInformation ip in netInterface.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            ipAddresses.Add(ip.Address.ToString());
+                        }
+                    }
+                }
+            }
+            return ipAddresses;
         }
 
         #region Serialization
