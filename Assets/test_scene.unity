@@ -1647,10 +1647,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8124a426f575431e38d9956e2c17f9ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  subjectNameInput: {fileID: 1277045728}
-  trialNameInput: {fileID: 2125709289}
-  startButton: {fileID: 1264036142}
-  stopButton: {fileID: 1115453790}
+  _subjectNameInput: {fileID: 1277045728}
+  _trialNameInput: {fileID: 2125709289}
+  _startButton: {fileID: 1264036142}
+  _stopButton: {fileID: 1115453790}
 --- !u!1 &1264036140
 GameObject:
   m_ObjectHideFlags: 0
@@ -2478,7 +2478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1719198246
 Transform:
   m_ObjectHideFlags: 0
@@ -2530,7 +2530,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1860406660
 Transform:
   m_ObjectHideFlags: 0
