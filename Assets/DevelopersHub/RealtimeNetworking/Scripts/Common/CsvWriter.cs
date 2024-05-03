@@ -9,12 +9,12 @@ namespace DevelopersHub.RealtimeNetworking.Common
 {
     public class CsvWriter : MonoBehaviour
     {
-        [SerializeField] private InputField subjectNameInput;
-        [SerializeField] private InputField trialNameInput;
-        [SerializeField] private Button startButton;
-        [SerializeField] private Button stopButton;
+        [SerializeField] private InputField _subjectNameInput;
+        [SerializeField] private InputField _trialNameInput;
+        [SerializeField] private Button _startButton;
+        [SerializeField] private Button _stopButton;
 
-        string FilePath { get { return Path.Combine(Application.persistentDataPath, subjectNameInput.text, $"{trialNameInput.text}.csv"); } }
+        string _filePath { get { return Path.Combine(Application.persistentDataPath, _subjectNameInput.text, $"{_trialNameInput.text}.csv"); } }
         private StreamWriter _fileWriter;
         
         private bool _isRecording = false;
@@ -38,12 +38,12 @@ namespace DevelopersHub.RealtimeNetworking.Common
 
         public class DataEntry
         {
-            public float Timestamp { get; }
+            public float timestamp { get; }
             public List<PoseVectors> poses { get; } = new List<PoseVectors>();
 
             public DataEntry(float timestamp)
             {
-                Timestamp = timestamp;
+                this.timestamp = timestamp;
             }
 
             public static string Header { 
@@ -54,7 +54,7 @@ namespace DevelopersHub.RealtimeNetworking.Common
 
             public override string ToString()
             {
-                var _out = $"{Timestamp:F6}";
+                var _out = $"{timestamp:F6}";
                 foreach (var item in poses)
                 {
                     _out += $",{item.position.X:F6},{item.position.Y:F6},{item.position.Z:F6}";
@@ -68,41 +68,41 @@ namespace DevelopersHub.RealtimeNetworking.Common
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // Force the "." to be the decimal separator
 
-            startButton.interactable = false;
-            startButton.gameObject.SetActive(true);
-            stopButton.interactable = false;
-            stopButton.gameObject.SetActive(false);
+            _startButton.interactable = false;
+            _startButton.gameObject.SetActive(true);
+            _stopButton.interactable = false;
+            _stopButton.gameObject.SetActive(false);
         }
 
         public void ValidateDataPath()
         {
-            if (string.IsNullOrEmpty(subjectNameInput.text) || string.IsNullOrEmpty(trialNameInput.text))
+            if (string.IsNullOrEmpty(_subjectNameInput.text) || string.IsNullOrEmpty(_trialNameInput.text))
             {
-                startButton.interactable = false;
+                _startButton.interactable = false;
                 return;
             }
 
             // Do not allow recording if the file already exists
-            if (File.Exists(FilePath))
+            if (File.Exists(_filePath))
             {
-                startButton.interactable = false;
+                _startButton.interactable = false;
                 return;
             }
 
-            startButton.interactable = true;
+            _startButton.interactable = true;
         }
 
         public void StartRecording()
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+            Directory.CreateDirectory(Path.GetDirectoryName(_filePath));
 
-            _fileWriter = new StreamWriter(FilePath);
+            _fileWriter = new StreamWriter(_filePath);
             _fileWriter.WriteLine(DataEntry.Header);
 
-            startButton.interactable = false;
-            startButton.gameObject.SetActive(false);
-            stopButton.interactable = true;
-            stopButton.gameObject.SetActive(true);
+            _startButton.interactable = false;
+            _startButton.gameObject.SetActive(false);
+            _stopButton.interactable = true;
+            _stopButton.gameObject.SetActive(true);
 
             _isRecording = true;
         }
@@ -116,10 +116,10 @@ namespace DevelopersHub.RealtimeNetworking.Common
                 _fileWriter = null;
             }
 
-            startButton.interactable = true;
-            startButton.gameObject.SetActive(true);
-            stopButton.interactable = false;
-            stopButton.gameObject.SetActive(false);
+            _startButton.interactable = true;
+            _startButton.gameObject.SetActive(true);
+            _stopButton.interactable = false;
+            _stopButton.gameObject.SetActive(false);
             ValidateDataPath();
 
             _isRecording = false;
